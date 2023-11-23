@@ -13,6 +13,9 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.ui.actions;
 
+import static org.eclipse.swt.widgets.ControlUtil.executeWithRedrawDisabled;
+
+import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -21,8 +24,6 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-
-import java.text.Collator;
 
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.graphics.Image;
@@ -461,9 +462,9 @@ public class CategoryFilterActionGroup extends ActionGroup {
 	}
 
 	private void fireSelectionChange() {
-		fViewer.getControl().setRedraw(false);
-		BusyIndicator.showWhile(fViewer.getControl().getDisplay(), () -> fViewer.refresh());
-		fViewer.getControl().setRedraw(true);
+		executeWithRedrawDisabled(fViewer.getControl(), () -> {
+			BusyIndicator.showWhile(fViewer.getControl().getDisplay(), () -> fViewer.refresh());
+		});
 	}
 
 	private String getPreferenceKey() {

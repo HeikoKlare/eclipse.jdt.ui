@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.ui.refactoring.reorg;
 
+import static org.eclipse.swt.widgets.ControlUtil.executeWithRedrawDisabled;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -596,9 +598,8 @@ class RenameTypeWizardSimilarElementsPage extends UserInputWizardPage {
 	private void initializeUIFromRef() {
 		// Get data from the refactoring
 		final Map<IJavaElement, String> elementsToNewNames= getRenameTypeProcessor().getSimilarElementsToNewNames();
-		try {
-			// To prevent flickering, stop redrawing
-			getShell().setRedraw(false);
+		// To prevent flickering, stop redrawing
+		executeWithRedrawDisabled(getShell(), () -> {
 			if (fSimilarElementsToNewName == null || elementsToNewNames != fSimilarElementsToNewName) {
 				fSimilarElementsToNewName= elementsToNewNames;
 				fTreeViewerLabelProvider.initialize(fSimilarElementsToNewName);
@@ -606,9 +607,7 @@ class RenameTypeWizardSimilarElementsPage extends UserInputWizardPage {
 			}
 			fTreeViewer.expandAll();
 			restoreSelectionAndNames(getRenameTypeProcessor().getSimilarElementsToSelection());
-		} finally {
-			getShell().setRedraw(true);
-		}
+		});
 		fWasInitialized= true;
 	}
 

@@ -14,6 +14,8 @@
 ******************************************************************************/
 package org.eclipse.jdt.internal.ui.packageview;
 
+import static org.eclipse.swt.widgets.ControlUtil.executeWithRedrawDisabled;
+
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
@@ -1220,12 +1222,9 @@ public class PackageExplorerPart extends ViewPart
 	}
 
 	public void collapseAll() {
-		try {
-			fViewer.getControl().setRedraw(false);
+		executeWithRedrawDisabled(fViewer.getControl(), () -> {
 			fViewer.collapseToLevel(getViewPartInput(), AbstractTreeViewer.ALL_LEVELS);
-		} finally {
-			fViewer.getControl().setRedraw(true);
-		}
+		});
 	}
 
 	@Override

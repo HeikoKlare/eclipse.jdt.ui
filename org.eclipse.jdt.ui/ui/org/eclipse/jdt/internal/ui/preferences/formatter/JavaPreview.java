@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.ui.preferences.formatter;
 
+import static org.eclipse.swt.widgets.ControlUtil.executeWithRedrawDisabled;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -205,21 +207,21 @@ public class JavaPreview {
 		final int totalPixels0= getHeightOfAllLines(widget);
 		final int topPixelRange0= totalPixels0 > height ? totalPixels0 - height : 0;
 
-		widget.setRedraw(false);
-		if (fEditorMode) {
-			fPreviewDocument.set(fPreviewText);
-		} else {
-			doFormatPreview();
-			fSourceViewer.getUndoManager().reset();
-		}
-		fSourceViewer.setSelection(null);
+		executeWithRedrawDisabled(widget, () -> {
+			if (fEditorMode) {
+				fPreviewDocument.set(fPreviewText);
+			} else {
+				doFormatPreview();
+				fSourceViewer.getUndoManager().reset();
+			}
+			fSourceViewer.setSelection(null);
 
-		final int totalPixels1= getHeightOfAllLines(widget);
-		final int topPixelRange1= totalPixels1 > height ? totalPixels1 - height : 0;
+			final int totalPixels1= getHeightOfAllLines(widget);
+			final int topPixelRange1= totalPixels1 > height ? totalPixels1 - height : 0;
 
-		final int top1= topPixelRange0 > 0 ? (int)(topPixelRange1 * top0 / (double)topPixelRange0) : 0;
-		widget.setTopPixel(top1);
-		widget.setRedraw(true);
+			final int top1= topPixelRange0 > 0 ? (int)(topPixelRange1 * top0 / (double)topPixelRange0) : 0;
+			widget.setTopPixel(top1);
+		});
 
 		widget.setCursor(widget.getDisplay().getSystemCursor(fEditorMode ? SWT.CURSOR_IBEAM : SWT.CURSOR_ARROW));
 	}

@@ -15,6 +15,8 @@
 
 package org.eclipse.jdt.internal.ui.packageview;
 
+import static org.eclipse.swt.widgets.ControlUtil.executeWithRedrawDisabled;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyEvent;
 
@@ -414,9 +416,7 @@ class PackageExplorerActionGroup extends CompositeActionGroup {
 			String property= event.getProperty();
 			if (IWorkingSetManager.CHANGE_WORKING_SET_CONTENT_CHANGE.equals(property)) {
 				TreeViewer viewer= fPart.getTreeViewer();
-				viewer.getControl().setRedraw(false);
-				viewer.refresh();
-				viewer.getControl().setRedraw(true);
+				executeWithRedrawDisabled(viewer.getControl(), () -> viewer.refresh());
 			}
 		}
 	}

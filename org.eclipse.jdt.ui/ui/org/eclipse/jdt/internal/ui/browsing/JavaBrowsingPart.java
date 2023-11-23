@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.ui.browsing;
 
+import static org.eclipse.swt.widgets.ControlUtil.executeWithRedrawDisabled;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
@@ -593,9 +595,7 @@ abstract class JavaBrowsingPart extends ViewPart implements IMenuListener, IView
 			updateTitle();
 		else	if (IWorkingSetManager.CHANGE_WORKING_SET_CONTENT_CHANGE.equals(property)) {
 			updateTitle();
-			fViewer.getControl().setRedraw(false);
-			fViewer.refresh();
-			fViewer.getControl().setRedraw(true);
+			executeWithRedrawDisabled(fViewer.getControl(), () -> fViewer.refresh());
 		}
 
 	}
