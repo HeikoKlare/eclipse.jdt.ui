@@ -131,9 +131,15 @@ public class JavaUILabelProvider implements ILabelProvider, IColorProvider, ISty
 	}
 
 	protected Image decorateImage(Image image, Object element) {
+		return decorateImage(image, element, true);
+	}
+
+	protected Image decorateImage(Image image, Object element, boolean expensive) {
 		if (fLabelDecorators != null && image != null) {
 			for (ILabelDecorator decorator : fLabelDecorators) {
-				image= decorator.decorateImage(image, element);
+				if (expensive || !decorator.isImageDecorationExpensive()) {
+					image= decorator.decorateImage(image, element);
+				}
 			}
 		}
 		return image;
@@ -147,6 +153,16 @@ public class JavaUILabelProvider implements ILabelProvider, IColorProvider, ISty
 		}
 
 		return decorateImage(result, element);
+	}
+
+	@Override
+	public Image getPreviewImage(Object element) {
+		Image result= fImageLabelProvider.getImageLabel(element, evaluateImageFlags(element));
+		if (result == null && (element instanceof IStorage)) {
+			result= fStorageLabelProvider.getImage(element);
+		}
+
+		return decorateImage(result, element, false);
 	}
 
 	protected String decorateText(String text, Object element) {

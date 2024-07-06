@@ -103,17 +103,28 @@ public class OverrideIndicatorLabelDecorator implements ILabelDecorator, ILightw
 		return text;
 	}
 
+
+	@Override
+	public boolean isImageDecorationExpensive() {
+		return true;
+	}
+
 	@Override
 	public Image decorateImage(Image image, Object element) {
 		if (image == null)
 			return null;
 
+		try {
+			Thread.sleep(500);
+		} catch (InterruptedException e) {
+		}
 		int adornmentFlags= computeAdornmentFlags(element);
 		if (adornmentFlags != 0) {
-			ImageDescriptor baseImage= new ImageImageDescriptor(image);
 			Rectangle bounds= image.getBounds();
+			ImageDescriptor baseImage= new ImageImageDescriptor(image);
 			return getRegistry().get(new JavaElementImageDescriptor(baseImage, adornmentFlags, new Point(bounds.width, bounds.height)));
 		}
+
 		return image;
 	}
 
@@ -263,6 +274,12 @@ public class OverrideIndicatorLabelDecorator implements ILabelDecorator, ILightw
 
 	@Override
 	public void decorate(Object element, IDecoration decoration) {
+		try {
+			Thread.sleep(10);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		int adornmentFlags= computeAdornmentFlags(element);
 		if ((adornmentFlags & JavaElementImageDescriptor.IMPLEMENTS) != 0) {
 			if ((adornmentFlags & JavaElementImageDescriptor.SYNCHRONIZED) != 0) {
